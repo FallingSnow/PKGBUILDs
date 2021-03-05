@@ -21,9 +21,9 @@ pkgver() {
 
 prepare() {
         cd 8821cu
-	if [ $CARCH -eq 'aarch64' ]; then
+	if [[ "$CARCH" -eq 'aarch64' ]]; then
 		./raspi64.sh
-	elif [ $CARCH -eq 'armv7h' ]; then
+	elif [[ "$CARCH" -eq 'armv7h' ]]; then
 		./raspi32.sh
 	fi
 }
