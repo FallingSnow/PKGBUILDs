@@ -1,0 +1,41 @@
+# Maintainer: enno <elo-archlinux(dot)nerdworks.de>
+
+pkgname=8821cu-raspberrypi-git
+_pkgbase=8821cu
+pkgver=5.2.5.3_24795.20171031.r99.ge54b8f4
+pkgrel=1
+pkgdesc="8821cu chipset driver"
+arch=('armv7h' 'aarch64')
+url="https://github.com/morrownr/8821cu"
+license=('GPL2')
+depends=('bc')
+makedepends=('git' 'linux-headers')
+conflicts=("${_pkgbase}")
+source=("git+https://github.com/morrownr/8821cu.git")
+install="${_pkgbase}.install"
+sha256sums=('SKIP')
+pkgver() {
+    cd 8821cu
+    printf '%s.r%s.g%s' '5.2.5.3_24795.20171031' "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+        cd 8821cu
+	if [ $CARCH -eq 'aarch64' ]; then
+		./raspi64.sh
+	elif [ $CARCH -eq 'armv7h' ]; then
+		./raspi32.sh
+	fi
+}
+
+build() {
+        cd 8821cu
+	make
+}
+
+package() {
+	mkdir -p "$pkgdir/usr/lib/modules/$(uname -r)/kernel/drivers/net/wireless"
+        cd 8821cu
+	install -p -m 644 8821cu.ko "$pkgdir/usr/lib/modules/$(uname -r)/kernel/drivers/net/wireless/8821cu.ko"
+}
+
